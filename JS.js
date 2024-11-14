@@ -5,6 +5,7 @@
  */
 
 'use strict';
+
 // Define a class MenuButtonActions
 class MenuButtonActions {
   constructor(domNode, performMenuAction) {
@@ -17,7 +18,7 @@ class MenuButtonActions {
     this.lastMenuitem = false;
     this.firstChars = [];
 
-// Add event listeners for button interactions
+    // Add event listeners for button interactions
     this.buttonNode.addEventListener(
       'keydown',
       this.onButtonKeydown.bind(this)
@@ -30,28 +31,24 @@ class MenuButtonActions {
     for (var i = 0; i < nodes.length; i++) {
       var menuitem = nodes[i];
       this.menuitemNodes.push(menuitem);
-      menuitem.tabIndex = -1;
+      menuitem.tabIndex = -1; // Initialize all items as unfocusable
       this.firstChars.push(menuitem.textContent.trim()[0].toLowerCase());
 
       menuitem.addEventListener('keydown', this.onMenuitemKeydown.bind(this));
-
       menuitem.addEventListener('click', this.onMenuitemClick.bind(this));
-
-      menuitem.addEventListener(
-        'mouseover',
-        this.onMenuitemMouseover.bind(this)
-      );
+      menuitem.addEventListener('mouseover', this.onMenuitemMouseover.bind(this));
 
       if (!this.firstMenuitem) {
         this.firstMenuitem = menuitem;
       }
       this.lastMenuitem = menuitem;
     }
-// Add focus in and focus out event listeners for handling focus styles
+
+    // Add focus in and focus out event listeners for handling focus styles
     domNode.addEventListener('focusin', this.onFocusin.bind(this));
     domNode.addEventListener('focusout', this.onFocusout.bind(this));
 
-// Add mousedown event listener on window to handle clicks outside the menu
+    // Add mousedown event listener on window to handle clicks outside the menu
     window.addEventListener(
       'mousedown',
       this.onBackgroundMousedown.bind(this),
@@ -59,10 +56,18 @@ class MenuButtonActions {
     );
   }
 
+  // Method to apply focus and update tabIndex for the new menu item
   setFocusToMenuitem(newMenuitem) {
     this.menuitemNodes.forEach(function (item) {
-// R.G. Here to add the roving tabindex logic  ;)
+      // Set all items' tabIndex to -1 to remove them from the tab order
+      item.tabIndex = -1;
     });
+
+    // Set the new menu item's tabIndex to 0, making it focusable
+    newMenuitem.tabIndex = 0;
+
+    // Programmatically focus the new menu item
+    newMenuitem.focus();
   }
 
   setFocusToFirstMenuitem() {
@@ -170,9 +175,6 @@ class MenuButtonActions {
     this.domNode.classList.remove('focus');
   }
 
-//This method is triggered when a keydown event occurs on the menu button.
-
-
   onButtonKeydown(event) {
     var key = event.key,
       flag = false;
@@ -222,8 +224,6 @@ class MenuButtonActions {
     event.stopPropagation();
     event.preventDefault();
   }
-
-// This method is triggered when a keydown event occurs on a menu item.
 
   onMenuitemKeydown(event) {
     var tgt = event.currentTarget,
